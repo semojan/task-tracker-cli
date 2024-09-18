@@ -22,10 +22,14 @@ namespace _00_Task_Tracker
                 if (reqArr[0].ToLower() == "add")
                 {
                     result = tasksRepo.AddTask(reqArr[1]);
-                }else if (reqArr[0].ToLower() == "update")
+                } else if (reqArr[0].ToLower() == "update")
                 {
                     int taskId = int.Parse(reqArr[1]);
                     result = tasksRepo.UpdateTask(taskId, reqArr[2]);
+                } else if (reqArr[0].ToLower() == "delete")
+                {
+                    int taskId = int.Parse(reqArr[1]);
+                    result = tasksRepo.DeleteTask(taskId);
                 }
 
                 Console.WriteLine(result);

@@ -75,5 +75,36 @@ namespace _00_Task_Tracker
             return $"Task updated successfully (ID: {taskId})";
         }
 
+        public string DeleteTask(int taskId)
+        {
+            List<Task> tasks = new List<Task>();
+
+            if (!File.Exists(path))
+            {
+                return "There are currently no tasks, add some first - no file";
+            }
+
+            string jsonData = File.ReadAllText(path);
+            tasks = JsonConvert.DeserializeObject<List<Task>>(jsonData) ?? new List<Task>();
+
+            if (tasks.Count < 1)
+            {
+                return "There are currently no tasks, add some first - no item";
+            }
+
+            Task task = tasks.FirstOrDefault(t => t.id == taskId);
+
+            if (task == null)
+            {
+                return $"Task with ID: {taskId} not found.";
+            }
+
+            tasks.Remove(task);
+
+            File.WriteAllText(path, JsonConvert.SerializeObject(tasks, Formatting.Indented));
+
+
+            return "Task deleted successfully";
+        }
     }
 }
