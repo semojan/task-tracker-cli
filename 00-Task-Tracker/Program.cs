@@ -30,6 +30,10 @@ namespace _00_Task_Tracker
                 {
                     int taskId = int.Parse(reqArr[1]);
                     result = tasksRepo.DeleteTask(taskId);
+                } else if (reqArr[0].ToLower() == "mark-in-progress" || reqArr[0].ToLower() == "mark-done")
+                {
+                    int taskId = int.Parse(reqArr[1]);
+                    result = tasksRepo.ChangeStatus(taskId, reqArr[0].ToLower());
                 }
 
                 Console.WriteLine(result);

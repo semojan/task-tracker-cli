@@ -31,7 +31,7 @@ namespace _00_Task_Tracker
             {
                 id = taskId,
                 description = description,
-                status = "todo",
+                status = (Task.Status)0,
                 createdAt = DateTime.Now,
                 updatedAt = DateTime.Now
             };
@@ -105,6 +105,47 @@ namespace _00_Task_Tracker
 
 
             return "Task deleted successfully";
+        }
+
+        public string ChangeStatus(int taskId, string status)
+        {
+            List<Task> tasks = new List<Task>();
+            int statusCode;
+
+            if (!File.Exists(path))
+            {
+                return "There are currently no tasks, add some first - no file";
+            }
+
+            if (status == "mark-in-progress")
+            {
+                statusCode = 1;
+            } else
+            {
+                statusCode = 2;
+            }
+
+            string jsonData = File.ReadAllText(path);
+            tasks = JsonConvert.DeserializeObject<List<Task>>(jsonData) ?? new List<Task>();
+
+            if (tasks.Count < 1)
+            {
+                return "There are currently no tasks, add some first - no item";
+            }
+
+            Task task = tasks.FirstOrDefault(t => t.id == taskId);
+
+            if (task == null)
+            {
+                return $"Task with ID: {taskId} not found.";
+            }
+
+            task.status = (Task.Status)statusCode;
+            task.updatedAt = DateTime.Now;
+
+            File.WriteAllText(path, JsonConvert.SerializeObject(tasks, Formatting.Indented));
+
+            return "Task status changed successfully";
         }
     }
 }
