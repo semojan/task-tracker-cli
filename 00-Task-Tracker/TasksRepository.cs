@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static _00_Task_Tracker.Task;
 
 namespace _00_Task_Tracker
 {
@@ -146,6 +147,69 @@ namespace _00_Task_Tracker
             File.WriteAllText(path, JsonConvert.SerializeObject(tasks, Formatting.Indented));
 
             return "Task status changed successfully";
+        }
+
+        public string ListTasks(string filterStatus = "")
+        {
+            List<Task> allTasks = new List<Task>();
+            int? statusCode = null;
+
+            if (!File.Exists(path))
+            {
+                return "There are currently no tasks, add some first - no file";
+            }
+
+            if (filterStatus == "done")
+            {
+                statusCode = 2;
+            }
+            else if (filterStatus == "todo")
+            {
+                statusCode = 0;
+            }
+            else if (filterStatus == "in-progress")
+            {
+                statusCode = 1;
+            }
+
+            string jsonData = File.ReadAllText(path);
+            allTasks = JsonConvert.DeserializeObject<List<Task>>(jsonData) ?? new List<Task>();
+
+            if (allTasks.Count < 1)
+            {
+                return "There are currently no tasks, add some first - no item";
+            }
+
+            List<Task> result = new List<Task>();
+
+            if (statusCode == null)
+            {
+                result = allTasks;
+            }
+            else
+            {
+                Task.Status status = (Status)statusCode;
+                result = allTasks.FindAll(t => t.status == status);
+            }
+
+            if (!result.Any())
+            {
+                return $"No tasks found with status: {filterStatus}";
+            }
+
+            Console.WriteLine("\n\nList of your tasks:\n\n");
+
+            foreach (var task in result)
+            {
+                Console.WriteLine($"ID: {task.id}");
+                Console.WriteLine($"Description: {task.description}");
+                Console.WriteLine($"Status: {task.status}");
+                Console.WriteLine($"Created At: {task.createdAt}");
+                Console.WriteLine($"Updated At: {task.updatedAt}");
+                Console.WriteLine("\n*--------------------------------------*\n\n");
+            }
+
+            return "the list of your tasks ^^ \n\n";
         }
     }
 }
